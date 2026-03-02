@@ -1,0 +1,55 @@
+🛡️ CAPEv2 RedLine 탐지 및 자동 분석 적용 가이드 (README)
+
+이 가이드는 RedLine Stealer를 식별하는 YARA 룰 적용과 분석 엔진 버그 수정을 포함합니다.
+1. YARA 룰 배치 및 인덱스 등록
+
+터미널에서 아래 명령어를 순서대로 실행하여 룰을 시스템에 등록합니다.
+Bash
+
+# 1. 룰 저장 폴더 생성 (이미 있다면 통과)
+sudo mkdir -p /opt/CAPEv2/data/yara/CAPE
+
+# 2. 전달받은 sme.yar 파일을 해당 경로로 복사
+# (파일이 현재 디렉토리에 있다고 가정)
+sudo cp sme.yar /opt/CAPEv2/data/yara/CAPE/sme.yar
+
+# 3. CAPE 폴더 인덱스에 sme.yar 등록
+echo 'include "sme.yar"' | sudo tee -a /opt/CAPEv2/data/yara/CAPE/index.yar
+
+# 4. 최상위 메인 인덱스에 CAPE 폴더 연결 (중복 등록 방지를 위해 한 번만 실행)
+# 이미 등록되어 있는지 확인 후 실행 권장
+echo 'include "CAPE/index.yar"' | sudo tee -a /opt/CAPEv2/data/yara/index.yar
+
+2. RedLine 파서 소스 코드 수정 (필수)
+
+RedLine 탐지 시 C2 주소 등 상세 정보를 뽑아낼 때 발생하는 TypeError를 방지하기 위해 코드를 수정해야 합니다.
+
+    파일 열기 (가상환경 이름 capev2-t2x27zRb는 환경에 따라 다를 수 있으니 탭 키로 확인하세요)
+    Bash
+
+    sudo nano /opt/CAPEv2/.cache/pypoetry/virtualenvs/capev2-t2x27zRb-py3.12/lib/python3.12/site-packages/cape_parsers/CAPE/core/RedLine.py
+
+    92번째 줄 수정
+
+        찾기: user_strings = extract_strings(data=data, on_demand=True)
+
+        수정: user_strings = extract_strings(data=data) (, on_demand=True 부분만 삭제)
+
+3. 캐시 삭제 및 시스템 반영
+
+설정을 변경한 후에는 반드시 캐시를 지우고 프로세서를 재시작해야 룰이 로드됩니다.
+Bash
+
+# 1. 이전 컴파일 캐시 파일(.yarc) 모두 삭제
+sudo find /opt/CAPEv2/data/yara/ -name "*.yarc" -exec rm -f {} \;
+
+# 2. CAPE 프로세서 서비스 재시작
+sudo systemctl restart cape-processor
+
+4. 분석 결과 확인 (검증)
+
+정상적으로 적용되었는지 확인하기 위해 기존 Task를 다시 처리해 봅니다.
+Bash
+
+# TaskID에 분석했던 번호(예: 32)를 넣어 실행
+sudo /etc/poetry/bin/poetry run python /opt/CAPEv2/utils/process.py [TaskID]

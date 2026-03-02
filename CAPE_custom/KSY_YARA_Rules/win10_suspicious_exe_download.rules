@@ -1,0 +1,21 @@
+# Suricata 최소 룰: HTTP를 통한 의심스러운 EXE 다운로드 탐지
+
+# 경고 룰 시작: HTTP 트래픽에서 EXE 다운로드 감지
+alert http any any -> any any (
+  # 알림 메시지
+  msg:"Suspicious EXE download";
+  # 서버 -> 클라이언트 방향이며 연결이 성립된 흐름만
+  flow:to_client,established;
+  # 요청 메소드 제한(일반적인 다운로드)
+  http.method; content:"GET"; nocase;
+  # 요청 URI에 ".exe" 포함 여부 확인(대소문자 무시)
+  http.uri; content:".exe"; nocase;
+  # 흔한 정상 업데이트 도메인 제외(오탐 감소)
+  http.host; content:"windowsupdate"; nocase; negated;
+  http.host; content:"microsoft"; nocase; negated;
+  # 룰 메타데이터
+  metadata: stage a, status stable;
+  # 룰 고유 ID와 개정 번호
+  sid:1000001; rev:2;
+# 룰 블록 종료
+)
