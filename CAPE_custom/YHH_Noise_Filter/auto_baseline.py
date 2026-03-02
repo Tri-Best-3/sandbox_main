@@ -1,3 +1,6 @@
+# Source attribution:
+# Original repository: https://github.com/toumai266/CAPE-Intelligent-Noise-Filter
+# Original author: toumai266
 #!/usr/bin/env python3
 import sys
 import json

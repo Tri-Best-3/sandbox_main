@@ -1,3 +1,6 @@
+# Source attribution:
+# Original repository: https://github.com/toumai266/CAPE-Intelligent-Noise-Filter
+# Original author: toumai266
 registry_keys:
   exact_match:
   - HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Command Processor\EnableExtensions

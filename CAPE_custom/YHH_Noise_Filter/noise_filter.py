@@ -1,3 +1,6 @@
+# Source attribution:
+# Original repository: https://github.com/toumai266/CAPE-Intelligent-Noise-Filter
+# Original author: toumai266
 import re
 import yaml
 import logging

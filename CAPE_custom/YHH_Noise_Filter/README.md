@@ -1,6 +1,7 @@
 # CAPE 지능형 노이즈 필터(CAPE Intelligent Noise Filter)
 
 CAPE v2 샌드박스의 분석 데이터(`report.json`)에서 윈도우 OS의 정상적인 백그라운드 행위(텔레메트리, 언어팩 로딩 등)와 네트워크 노이즈를 지능적으로 제거해주는 플러그인입니다.
+원본 링크 https://github.com/toumai266/CAPE-Intelligent-Noise-Filter
 
 ## 핵심 기능
 1. **전방위적 행위/네트워크 필터링:** 레지스트리, 파일, 뮤텍스, 명령어, DNS, IP, HTTP 요청 등 11가지 핵심 지표에서 노이즈 제거.
